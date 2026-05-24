@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gospel Keys Pro - Web Companion</title>
+  <style>
+    /* Global Reset & Theme */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    
+    :root {
+      --bg-dark: #0f1016;
+      --bg-card: #171923;
+      --primary: #41b883; /* Emerald green accent */
+      --primary-glow: rgba(65, 184, 131, 0.4);
+      --secondary: #3b82f6; /* Blue accent */
+      --secondary-glow: rgba(59, 130, 246, 0.4);
+      --accent: #f59e0b; /* Amber */
+      --text: #f7fafc;
+      --text-muted: #a0aec0;
+      --border: rgba(255, 255, 255, 0.08);
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-dark);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2d3748;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--primary);
+    }
+
+    /* Container & Layout */
+    header {
+      background: rgba(23, 25, 35, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 1rem 1.5rem;
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo-badge {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1.2rem;
+      box-shadow: 0 0 15px var(--primary-glow);
+    }
+
+    .logo-text h1 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      background: linear-gradient(135deg, #fff 30%, var(--primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .logo-text p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Audio Banner */
+    .audio-banner {
+      background: rgba(65, 184, 131, 0.1);
+      border: 1px solid rgba(65, 184, 131, 0.25);
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.85rem;
+    }
+
+    .audio-banner button {
+      background: var(--primary);
+      color: #000;
+      border: none;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .audio-banner button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 10px var(--primary-glow);
+    }
+
+    main {
+      flex: 1;
+      max-width: 1250px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1.5rem;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 1024px) {
+      main {
+        grid-template-columns: 8fr 4fr;
+      }
+    }
+
+    /* Main Sandbox Section (Left Pane) */
+    .sandbox-column {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .glass-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-title svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--primary);
+    }
+
+    /* Navigation / Tabs */
+    .tab-header {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1rem;
+      gap: 0.5rem;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.75rem 1.25rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+    }
+
+    .tab-btn:hover {
+      color: var(--text);
+    }
+
+    .tab-btn.active {
+      color: var(--primary);
+      border-bottom: 2px solid var(--primary);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Virtual Piano Layout */
+    .piano-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+      gap: 0.75rem;
+    }
+
+    .preset-selector {
+      background: #232735;
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .piano-options {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .piano-container-wrapper {
+      background: #000;
+      padding: 1.5rem 1rem 0.5rem 1rem;
+      border-radius: 12px;
+      border: 1px solid #2d3748;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+      position: relative;
+    }
+
+    .piano-keys {
+      display: flex;
+      height: 200px;
+      position: relative;
+      user-select: none;
+    }
+
+    .key {
+      flex: 1;
+      background: linear-gradient(to bottom, #fcfcfc 0%, #e2e2e2 100%);
+      border-right: 1px solid #bbb;
+      border-bottom: 1px solid #bbb;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.1s;
+      box-shadow: 0 4px 4px rgba(0,0,0,0.15);
+    }
+
+    .key:last-child {
+      border-right: none;
+    }
+
+    .key:active, .key.pressed {
+      background: linear-gradient(to bottom, #e2e2e2 0%, #c5c5c5 100%);
+      box-shadow: inset 0 3px 5px rgba(0,0,0,0.3);
+    }
+
+    .key.active {
+      background: linear-gradient(to bottom, #d1fae5 0%, #34d399 100%) !important;
+      border-right-color: #059669;
+      box-shadow: 0 0 10px var(--primary-glow);
+    }
+
+    .key.black {
+      background: linear-gradient(to bottom, #303030 0%, #121212 100%);
+      border: 1px solid #000;
+      border-bottom-left-radius: 3px;
+      border-bottom-right-radius: 3px;
+      position: absolute;
+      height: 120px;
+      width: 2.8%;
+      z-index: 10;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    }
+
+    .key.black:active, .key.black.pressed {
+      background: linear-gradient(to bottom, #121212 0%, #000 100%);
+    }
+
+    .key.black.active {
+      background: linear-gradient(to bottom, #065f46 0%, #059669 100%) !important;
+      box-shadow: 0 0 8px var(--primary-glow);
+    }
+
+    .key-label {
+      position: absolute;
+      bottom: 10px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #333;
+      pointer-events: none;
+    }
+
+    .key.black .key-label {
+      color: #ccc;
+      bottom: 6px;
+      font-size: 0.65rem;
+    }
+
+    /* Pathways / Courses (Tab 0) */
+    .courses-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    @media (min-width: 640px) {
+      .courses-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .course-card {
+      background: #202230;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1rem;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .course-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+    }
+
+    .course-badge {
+      display: inline-block;
+      align-self: flex-start;
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .badge-beg { background: rgba(52, 211, 153, 0.15); color: #34d399; }
+    .badge-int { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+    .badge-pro { background: rgba(244, 63, 94, 0.15); color: #f43f5e; }
+
+    .course-title {
+      font-weight: 700;
+      font-size: 1rem;
+      margin-top: 0.25rem;
+    }
+
+    .course-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .course-progress {
+      margin-top: 0.5rem;
+    }
+
+    .progress-bar-wrapper {
+      height: 6px;
+      background: #2d3748;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      border-radius: 3px;
+    }
+
+    /* Course Detail List view */
+    .course-detail {
+      display: none;
+    }
+
+    .course-detail-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .back-btn {
+      background: transparent;
+      border: none;
+      color: var(--primary);
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      font-size: 0.9rem;
+    }
+
+    .lessons-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .lesson-item {
+      background: #232637;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+    }
+
+    .lesson-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.5rem;
+      gap: 0.5rem;
+    }
+
+    .lesson-title-box h4 {
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .lesson-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .lesson-btn {
+      background: var(--primary);
+      color: #000;
+      border: none;
+      padding: 5px 12px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* Songs & Chord Charts Sheet (Tab 1) */
+    .songs-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 640px) {
+      .songs-layout {
+        grid-template-columns: 3.5fr 8.5fr;
+      }
+    }
+
+    .song-list-panel {
+      border-right: 1px solid var(--border);
+      padding-right: 0.5rem;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .song-side-item {
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      border: 1px solid transparent;
+      margin-bottom: 0.5rem;
+      transition: all 0.2s;
+    }
+
+    .song-side-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .song-side-item.active {
+      background: rgba(65, 184, 131, 0.15);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .chord-chart-view {
+      background: #111219;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+    }
+
+    .chord-chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .transpose-control {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+    }
+
+    .transpose-control button {
+      background: var(--bg-card);
+      border: none;
+      color: var(--text);
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+
+    .transpose-val {
+      font-size: 0.8rem;
+      font-weight: bold;
+      min-width: 24px;
+      text-align: center;
+    }
+
+    .lyrics-sheet {
+      font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+      white-space: pre-line;
+      line-height: 1.8;
+      font-size: 0.9rem;
+      overflow-x: auto;
+      background: #15161f;
+      padding: 1rem;
+      border-radius: 6px;
+      border-left: 3px solid var(--secondary);
+    }
+
+    /* Chord markup */
+    .chord-tag {
+      color: var(--primary);
+      font-weight: bold;
+      background: rgba(65, 184, 131, 0.12);
+      padding: 1px 4px;
+      border-radius: 3px;
+      cursor: pointer;
+      display: inline-block;
+      margin: 0 2px;
+      user-select: none;
+      border: 1px solid rgba(65, 184, 131, 0.2);
+    }
+
+    .chord-tag:hover {
+      background: var(--primary);
+      color: #000;
+      box-shadow: 0 0 5px var(--primary-glow);
+    }
+
+    /* RIGHT COLUMN: AI Practice Coach */
+    .coach-section {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      height: 380px;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .chat-bubble {
+      max-width: 85%;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+    }
+
+    .bubble-assistant {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      align-self: flex-start;
+      border-bottom-left-radius: 3px;
+    }
+
+    .bubble-user {
+      background: linear-gradient(135deg, var(--secondary) 0%, #1e40af 100%);
+      align-self: flex-end;
+      border-bottom-right-radius: 3px;
+    }
+
+    .chat-input-area {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .chat-input {
+      flex: 1;
+      background: #232735;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      outline: none;
+      font-size: 0.85rem;
+    }
+
+    .chat-send-btn {
+      background: var(--primary);
+      color: #000;
+      border: none;
+      padding: 0 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+
+    .chat-send-btn:hover {
+      box-shadow: 0 0 10px var(--primary-glow);
+    }
+
+    /* Suggestions bar */
+    .coach-suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .suggest-chip {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 3px 10px;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .suggest-chip:hover {
+      background: rgba(65, 184, 131, 0.1);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      background: rgba(15, 16, 22, 0.95);
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* UTILITIES */
+    .text-emerald { color: var(--primary) !important; }
+    .text-blue { color: var(--secondary) !important; }
+    .text-amber { color: var(--accent) !important; }
+    
+    .chord-inline-btn {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      color: var(--accent);
+      padding: 1px 6px;
+      font-size: 0.78rem;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    
+    .chord-inline-btn:hover {
+      background: var(--accent);
+      color: #000;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-content">
+      <div class="logo-container">
+        <div class="logo-badge">G</div>
+        <div class="logo-text">
+          <h1>Gospel Keys Pro</h1>
+          <p>Web Platform Edition</p>
+        </div>
+      </div>
+      
+      <div class="audio-banner" id="audio-banner">
+        <span>🔇 Web Audio Context is paused</span>
+        <button onclick="resumeAudio()">Activate Sound</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Body Grid -->
+  <main>
+    
+    <!-- Sandbox Column (Left) -->
+    <div class="sandbox-column">
+      
+      <!-- Virtual Piano Box -->
+      <div class="glass-card">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+          Direct Sandbox Chord Visualizer
+        </div>
+        
+        <div class="piano-controls">
+          <div>
+            <span style="font-size: 0.85rem; color: var(--text-muted); margin-right: 0.5rem;">Select Chord Voicing:</span>
+            <select class="preset-selector" id="chord-preset-select" onchange="applyPreset(this.value)">
+              <option value="C Major">C Major Triad</option>
+              <option value="C7">C Dominant 7th</option>
+              <option value="Db13">Db13 Dominant</option>
+              <option value="Fmaj9">Fmaj9</option>
+              <option value="C7#9">C7#9 (Hendrix Chord)</option>
+              <option value="G7b9">G7b9 Passing Chord</option>
+              <option value="7-3-6 (C key)">7-3-6 Passing Chord</option>
+              <option value="2-5-1 (C Major)">2-5-1 Progression Walk</option>
+              <option value="Bbmaj7">Bbmaj7 Jazz Frame</option>
+              <option value="Abmaj9">Abmaj9 Urban Worship</option>
+              <option value="Walkup C/E">Walk up C/E</option>
+              <option value="Cmaj9">Cmaj9 Worship Anchor</option>
+              <option value="Am7">Am7 Soft minor</option>
+              <option value="D9">D9 Dominant 9</option>
+              <option value="G13">G13 Dominant 13</option>
+            </select>
+          </div>
+          
+          <div class="piano-options">
+            <input type="checkbox" id="show-key-labels" checked onchange="toggleLabels(this.checked)">
+            <label for="show-key-labels">Show Key Labels</label>
+          </div>
+        </div>
+
+        <div class="piano-container-wrapper">
+          <div class="piano-keys" id="piano-keyboard-container">
+            <!-- Programmatic keys will render here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Core Content Multi-Tab Card -->
+      <div class="glass-card">
+        <div class="tab-header">
+          <button class="tab-btn active" onclick="switchTab(0, this)">Structured Courses</button>
+          <button class="tab-btn" onclick="switchTab(1, this)">Transposable Chords & Songs</button>
+        </div>
+
+        <!-- TAB ID: 0 (Courses) -->
+        <div class="tab-content active" id="tab-0">
+          
+          <!-- Pathways View -->
+          <div id="pathways-overview">
+            <h3 style="margin-bottom: 0.75rem; font-size: 1.1rem;">Your Gospel Academic Pathways</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">Navigate structured tracks to build theoretical depth, chord mastery, and actual fast preacher backing techniques.</p>
+            
+            <div class="courses-grid">
+              
+              <!-- Beginner Card -->
+              <div class="course-card" onclick="viewCourse('beginner')">
+                <div>
+                  <span class="course-badge badge-beg">Beginner</span>
+                  <div class="course-title">Gospel Piano Foundations</div>
+                  <div class="course-desc" style="margin-top: 5px;">Master major scales, the Nashville Number System, and standard diatonic triads.</div>
+                </div>
+                <div class="course-progress">
+                  <div style="display: flex; justify-content: space-between; font-size: 10px; font-weight: bold;">
+                    <span>4 Core Lessons</span>
+                    <span>100% Free</span>
+                  </div>
+                  <div class="progress-bar-wrapper">
+                    <div class="progress-bar" style="width: 25%"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Intermediate Card -->
+              <div class="course-card" onclick="viewCourse('intermediate')">
+                <div>
+                  <span class="course-badge badge-int">Intermediate</span>
+                  <div class="course-title">Anointed Passing Chords</div>
+                  <div class="course-desc" style="margin-top: 5px;">Unlock minor 2-5-1's, secondary dominants, and 7-3-6 relative minor walks.</div>
+                </div>
+                <div class="course-progress">
+                  <div style="display: flex; justify-content: space-between; font-size: 10px; font-weight: bold;">
+                    <span>4 Core Lessons</span>
+                    <span>Free Unlock</span>
+                  </div>
+                  <div class="progress-bar-wrapper">
+                    <div class="progress-bar" style="width: 0%"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Pro Card -->
+              <div class="course-card" onclick="viewCourse('pro')">
+                <div>
+                  <span class="course-badge badge-pro">PRO Mastery</span>
+                  <div class="course-title">Urban Worship & Shout</div>
+                  <div class="course-desc" style="margin-top: 5px;">Accompany preacher climax shouts, Diminished walkdowns, and F# shout basslines.</div>
+                </div>
+                <div class="course-progress">
+                  <div style="display: flex; justify-content: space-between; font-size: 10px; font-weight: bold;">
+                    <span>4 Core Lessons</span>
+                    <span>Unlocked with XP</span>
+                  </div>
+                  <div class="progress-bar-wrapper">
+                    <div class="progress-bar" style="width: 0%"></div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Course Detail View (Toggled dynamically) -->
+          <div id="course-detail-panel" class="course-detail">
+            <div class="course-detail-header">
+              <button class="back-btn" onclick="hideCourseDetail()">&larr; Back to Pathways</button>
+              <h3 id="detail-course-title" style="font-size: 1.15rem; font-weight: 800;">Course Title</h3>
+            </div>
+            
+            <p id="detail-course-description" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">Description here.</p>
+            
+            <div class="lessons-list" id="lessons-insertion-point">
+              <!-- Programmatic lessons rendered here -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- TAB ID: 1 (Songs) -->
+        <div class="tab-content" id="tab-1">
+          <div class="songs-layout">
+            
+            <!-- Song Choices Navigation -->
+            <div class="song-list-panel" id="songs-list-nav">
+              <!-- Rendered programmatically -->
+            </div>
+
+            <!-- Song Sheet View -->
+            <div class="chord-chart-view">
+              <div class="chord-chart-header">
+                <div>
+                  <h3 id="current-song-title" style="font-size: 1.1rem; font-weight: 800;">Total Praise (Majestic Anointing)</h3>
+                  <p id="current-song-artist" style="font-size: 0.8rem; color: var(--text-muted);">Richard Smallwood</p>
+                </div>
+                
+                <div class="transpose-control">
+                  <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: bold;">TRANSPOSE:</span>
+                  <button onclick="transposeSong(-1)">-</button>
+                  <span class="transpose-val" id="transpose-offset-label">0</span>
+                  <button onclick="transposeSong(1)">+</button>
+                </div>
+              </div>
+
+              <p style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: bold; color: var(--primary); margin-bottom: 0.5rem;">
+                Click any chord tag below to play it on the synthesized organ !
+              </p>
+              
+              <div class="lyrics-sheet" id="lyrics-sheet-outlet">
+                <!-- Programmatic lyrics rendered here -->
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- AI Practice Coach Column (Right) -->
+    <div class="glass-card coach-section">
+      <div class="card-title text-emerald">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+        AI Gospel Practice Coach
+      </div>
+      
+      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+        Ask our AI Assistant about any chord formulas, number system scales, or passing theories. It responds instantly with instructions and click-to-play chord shapes !
+      </p>
+
+      <div class="chat-container">
+        
+        <!-- Messages -->
+        <div class="chat-messages" id="chat-messages-box">
+          <div class="chat-bubble bubble-assistant">
+            Peace. I am your **Gospel Coach**. Ask me something like: 
+            <p style="margin-top: 6px;">
+              • <i>"How do I play the C7#9 chord?"</i><br>
+              • <i>"Explain the 2-5-1 in C Major"</i><br>
+              • <i>"What notes are in Db13?"</i>
+            </p>
+          </div>
+        </div>
+
+        <!-- Chat suggestions -->
+        <div class="coach-suggestions">
+          <div class="suggest-chip" onclick="handleSuggest('C7#9')">Query C7#9 formula</div>
+          <div class="suggest-chip" onclick="handleSuggest('2-5-1')">Explain 2-5-1 scale</div>
+          <div class="suggest-chip" onclick="handleSuggest('Db13')">Unlock Db13 notes</div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="chat-input-area">
+          <input type="text" id="chat-user-input" class="chat-input" placeholder="Ask about gospel voicings or progressions..." onkeydown="if(event.key === 'Enter') sendChatMessage()">
+          <button class="chat-send-btn" onclick="sendChatMessage()">SEND</button>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>Gospel Keys Pro © 2026. Made with high-fidelity visualizers and Web-Audio Orchestration.</p>
+    <p style="margin-top: 4px; font-size: 0.7rem; color: rgba(255, 255, 255, 0.3);">Compiled and served directly from Android Assets.</p>
+  </footer>
+
+  <script>
+    // ==========================================
+    // SYNTHESIZER ENGINE (Web Audio API)
+    // ==========================================
+    let audioCtx = null;
+    let mainGain = null;
+
+    // Standard gospel key note lists mapping to frequencies
+    const noteFrequencies = {
+      "C": 261.63, "C#": 277.18, "D": 293.66, "D#": 311.13, "E": 329.63,
+      "F": 349.23, "F#": 369.99, "G": 392.00, "G#": 415.30, "A": 440.00,
+      "A#": 466.16, "B": 493.88,
+      "C2": 523.25, "C#2": 554.37, "D2": 587.33, "D#2": 622.25, "E2": 659.25,
+      "F2": 698.46, "F#2": 739.99, "G2": 783.99, "G#2": 830.61, "A2": 880.00,
+      "A#2": 932.33, "B2": 987.77,
+      "C3": 1046.50
+    };
+
+    const pitches = [
+      "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B",
+      "C2", "C#2", "D2", "D#2", "E2", "F2", "F#2", "G2", "G#2", "A2", "A#2", "B2", "C3"
+    ];
+
+    const chordPresets = {
+      "C Major": ["C", "E", "G", "C2"],
+      "C7": ["C", "E", "G", "A#"],
+      "Db13": ["C#", "F", "A#", "D#2"],
+      "Fmaj9": ["F", "A", "C2", "E2"],
+      "C7#9": ["C", "E", "A#", "D#2"],
+      "G7b9": ["G", "B", "D2", "G#"],
+      "7-3-6 (C key)": ["B", "D#2", "F#", "A#"],
+      "2-5-1 (C Major)": ["D", "F", "A", "C2", "E2"],
+      "Bbmaj7": ["A#", "D2", "F", "A"],
+      "Abmaj9": ["G#", "C2", "D#", "G"],
+      "Walkup C/E": ["E", "G", "C2"],
+      "Cmaj9": ["C", "E", "G", "B", "D2"],
+      "Am7": ["A", "C2", "E2", "G"],
+      "D9": ["D", "F#", "A", "C2", "E2"],
+      "G13": ["G", "B", "F", "A#"]
+    };
+
+    // Initialize/Resume Web Audio context
+    function resumeAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        mainGain = audioCtx.createGain();
+        // Warm rich organ/Rhodes compressor
+        const compressor = audioCtx.createDynamicsCompressor();
+        compressor.threshold.setValueAtTime(-15, audioCtx.currentTime);
+        compressor.knee.setValueAtTime(30, audioCtx.currentTime);
+        compressor.ratio.setValueAtTime(4, audioCtx.currentTime);
+        compressor.attack.setValueAtTime(0.01, audioCtx.currentTime);
+        compressor.release.setValueAtTime(0.25, audioCtx.currentTime);
+        
+        mainGain.connect(compressor);
+        compressor.connect(audioCtx.destination);
+        
+        mainGain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      document.getElementById("audio-banner").innerHTML = "<span>🟢 Web Audio Synthesizer Active</span>";
+      document.getElementById("audio-banner").style.background = "rgba(65, 184, 131, 0.2)";
+    }
+
+    // Play a single note frequency
+    function playNoteFre(fre, duration = 0.8) {
+      if (!audioCtx || audioCtx.state === 'suspended') {
+        resumeAudio();
+      }
+      if (!audioCtx) return;
+
+      const oscTriangle = audioCtx.createOscillator();
+      const oscSine = audioCtx.createOscillator();
+      const noteGain = audioCtx.createGain();
+
+      oscTriangle.type = 'triangle';
+      oscTriangle.frequency.value = fre;
+
+      oscSine.type = 'sine';
+      oscSine.frequency.value = fre * 2; // Sub harmonic shimmer
+
+      noteGain.connect(mainGain);
+      oscTriangle.connect(noteGain);
+      oscSine.connect(noteGain);
+
+      // Smooth attack decay envelope (Hammond organ / Electric Piano feel)
+      const now = audioCtx.currentTime;
+      noteGain.gain.setValueAtTime(0, now);
+      noteGain.gain.linearRampToValueAtTime(0.3, now + 0.05); // Attack
+      noteGain.gain.exponentialRampToValueAtTime(0.18, now + 0.2); // Decay
+      noteGain.gain.setValueAtTime(0.18, now + duration - 0.15); // Sustain
+      noteGain.gain.exponentialRampToValueAtTime(0.01, now + duration); // Release
+
+      oscTriangle.start(now);
+      oscSine.start(now);
+      oscTriangle.stop(now + duration + 0.1);
+      oscSine.stop(now + duration + 0.1);
+    }
+
+    // Play a full list of notes together
+    function playChord(noteList) {
+      if (!audioCtx) resumeAudio();
+      noteList.forEach(note => {
+        const fre = noteFrequencies[note];
+        if (fre) {
+          playNoteFre(fre, 1.2);
+        }
+      });
+      // Flash keys visually
+      highlightPianoKeys(noteList);
+    }
+
+    // ==========================================
+    // KEYBOARD VISUALIZER MANAGEMENT
+    // ==========================================
+    let activeHighlightNotes = [];
+
+    function renderKeyboard() {
+      const container = document.getElementById("piano-keyboard-container");
+      container.innerHTML = "";
+      
+      let whiteKeyIndex = 0;
+      
+      // First, render White Keys
+      pitches.forEach((pitch) => {
+        const isBlack = pitch.includes("#");
+        if (!isBlack) {
+          const keyDiv = document.createElement("div");
+          keyDiv.className = "key";
+          keyDiv.dataset.pitch = pitch;
+          keyDiv.id = `key-${pitch.replace("#", "sharp")}`;
+          
+          const label = document.createElement("span");
+          label.className = "key-label";
+          label.textContent = pitch;
+          keyDiv.appendChild(label);
+          
+          keyDiv.addEventListener("mousedown", () => handleKeyClick(pitch));
+          keyDiv.addEventListener("touchstart", (e) => {
+            e.preventDefault();
+            handleKeyClick(pitch);
+          });
+
+          container.appendChild(keyDiv);
+          whiteKeyIndex++;
+        }
+      });
+
+      // Secondly, render Black Keys (absolutely positioned inside container)
+      let whiteCount = 0;
+      pitches.forEach((pitch) => {
+        const isBlack = pitch.includes("#");
+        if (isBlack) {
+          const keyDiv = document.createElement("div");
+          keyDiv.className = "key black";
+          keyDiv.dataset.pitch = pitch;
+          keyDiv.id = `key-${pitch.replace("#", "sharp")}`;
+          
+          // Calculate precise positioning based on white key indexes
+          let leftOffset = 0;
+          if (whiteCount === 1) leftOffset = 5.2; // C#
+          else if (whiteCount === 2) leftOffset = 12.3; // D#
+          else if (whiteCount === 4) leftOffset = 26.5; // F#
+          else if (whiteCount === 5) leftOffset = 33.6; // G#
+          else if (whiteCount === 6) leftOffset = 40.8; // A#
+          else if (whiteCount === 8) leftOffset = 54.8; // C#2
+          else if (whiteCount === 9) leftOffset = 62.0; // D#2
+          else if (whiteCount === 11) leftOffset = 76.2; // F#2
+          else if (whiteCount === 12) leftOffset = 83.3; // G#2
+          else if (whiteCount === 13) leftOffset = 90.5; // A#2
+          
+          keyDiv.style.left = `${leftOffset}%`;
+          
+          const label = document.createElement("span");
+          label.className = "key-label";
+          label.textContent = pitch;
+          keyDiv.appendChild(label);
+          
+          keyDiv.addEventListener("mousedown", () => handleKeyClick(pitch));
+          keyDiv.addEventListener("touchstart", (e) => {
+            e.preventDefault();
+            handleKeyClick(pitch);
+          });
+
+          container.appendChild(keyDiv);
+        } else {
+          whiteCount++;
+        }
+      });
+      
+      toggleLabels(document.getElementById("show-key-labels").checked);
+    }
+
+    function handleKeyClick(pitch) {
+      if (!audioCtx) resumeAudio();
+      const fre = noteFrequencies[pitch];
+      if (fre) playNoteFre(fre);
+      
+      // Temporary keyboard click effect
+      const keyEl = document.getElementById(`key-${pitch.replace("#", "sharp")}`);
+      if (keyEl) {
+        keyEl.classList.add("pressed");
+        setTimeout(() => keyEl.classList.remove("pressed"), 150);
+      }
+    }
+
+    // Flash selected chord notes on visual keyboard
+    function highlightPianoKeys(noteList) {
+      // Clear previous highlights
+      document.querySelectorAll(".key").forEach(key => key.classList.remove("active"));
+      
+      // Set new active classes
+      noteList.forEach(note => {
+        const keyEl = document.getElementById(`key-${note.replace("#", "sharp")}`);
+        if (keyEl) {
+          keyEl.classList.add("active");
+        }
+      });
+    }
+
+    function toggleLabels(visible) {
+      document.querySelectorAll(".key-label").forEach(lbl => {
+        lbl.style.display = visible ? "block" : "none";
+      });
+    }
+
+    function applyPreset(presetName) {
+      const notes = chordPresets[presetName];
+      if (notes) {
+        playChord(notes);
+      }
+    }
+
+    // ==========================================
+    // STRUCTURED COURSE SYSTEM
+    // ==========================================
+    const coursesData = {
+      beginner: {
+        title: "Gospel Piano Foundations (Level I)",
+        description: "Go from total beginner to playing solid diatonic worship structures in under direct tracks. Understand root coordination & fundamental chords.",
+        lessons: [
+          { title: "The Keyboard & 88-Key Geography", duration: "10mins", xp: 50, concept: "Octaves & finding white/black reference points", voicing: "C Major" },
+          { title: "The Nashville Number System (I-IV-V)", duration: "12mins", xp: 60, concept: "Transposing core gospel walk up tracks", voicing: "Walkup C/E" },
+          { title: "Diatonic Triads & Smooth Inversions", duration: "14mins", xp: 65, concept: "Mastering C, F, G inverted major chords", voicing: "Fmaj9" },
+          { title: "Left-Hand Octave Anchor Independent Control", duration: "15mins", xp: 70, concept: "Solidifying stable chord/bass sync", voicing: "Cmaj9" }
+        ]
+      },
+      intermediate: {
+        title: "Anointed Passing Chords (Level II)",
+        description: "Add color and emotional tension to your worship using professional jazz structures, major/minor 2-5-1's, and minor walking lines.",
+        lessons: [
+          { title: "The Beautiful 2-5-1 Urban Progression", duration: "16mins", xp: 80, concept: "Using minor 9th and dominant 13th formulas", voicing: "2-5-1 (C Major)" },
+          { title: "The Anointed 7-3-6 Relative Minor Walk", duration: "18mins", xp: 90, concept: "Resolving progressions with emotional lift", voicing: "7-3-6 (C key)" },
+          { title: "Secondary Dominants & Harmonic Bridges", duration: "17mins", xp: 95, concept: "Bridging verses with gorgeous augmented shapes", voicing: "Abmaj9" },
+          { title: "Trident Drop & Complex Left-Hand Tritones", duration: "19mins", xp: 100, concept: "Using dual-harmonic tritone spaces", voicing: "C7#9" }
+        ]
+      },
+      pro: {
+        title: "Urban Worship & Shout Mastery (Level III)",
+        description: "Accompany dynamic preachers with rapid-fire F# shout movements, deep walking basslines, and blazing blues-infused gospel chops.",
+        lessons: [
+          { title: "Preacher Backing & The Praise Shout Drive", duration: "25mins", xp: 140, concept: "F# preacher shout chord backing loop", voicing: "Passing Tritone C" },
+          { title: "The fully Diminished Chromatic Walkdown", duration: "22mins", xp: 150, concept: "Tension sliding with diminished 7th chords", voicing: "Db13" },
+          { title: "Fast-Fire walking Preacher Basslines", duration: "28mins", xp: 160, concept: "Left hand walks in F# on standard organ drawbars", voicing: "G13" },
+          { title: "Preacher Blues scale and Pentatonic Slur chops", duration: "30mins", xp: 180, concept: "Gospel sliding ornaments and quick octave triggers", voicing: "C7" }
+        ]
+      }
+    };
+
+    function viewCourse(levelKey) {
+      const course = coursesData[levelKey];
+      if (!course) return;
+
+      document.getElementById("pathways-overview").style.display = "none";
+      const detailPanel = document.getElementById("course-detail-panel");
+      detailPanel.style.display = "block";
+
+      document.getElementById("detail-course-title").textContent = course.title;
+      document.getElementById("detail-course-description").textContent = course.description;
+
+      const lessonsInsertion = document.getElementById("lessons-insertion-point");
+      lessonsInsertion.innerHTML = "";
+
+      course.lessons.forEach((les, idx) => {
+        const item = document.createElement("div");
+        item.className = "lesson-item";
+        item.innerHTML = `
+          <div class="lesson-header">
+            <div class="lesson-title-box">
+              <h4>${idx + 1}. ${les.title}</h4>
+              <p class="lesson-meta">⏱️ ${les.duration} &bull; 🏆 +${les.xp} XP &bull; Concept: <strong class="text-emerald">${les.concept}</strong></p>
+            </div>
+            <button class="lesson-btn" onclick="playChordDirect('${les.voicing}')">Visualize Voicing</button>
+          </div>
+        `;
+        lessonsInsertion.appendChild(item);
+      });
+    }
+
+    function hideCourseDetail() {
+      document.getElementById("course-detail-panel").style.display = "none";
+      document.getElementById("pathways-overview").style.display = "block";
+    }
+
+    function playChordDirect(voicingName) {
+      const notes = chordPresets[voicingName];
+      if (notes) {
+        // Sync Dropdown Select visually
+        document.getElementById("chord-preset-select").value = voicingName;
+        playChord(notes);
+      }
+    }
+
+    // ==========================================
+    // CHROMATIC LAYER & SONG CHORD TRANSPOSE
+    // ==========================================
+    const chromaticNotes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+
+    const songsData = [
+      {
+        id: "song_1",
+        title: "Total Praise (Richard Smallwood)",
+        artist: "Traditional Worship Hymn & Masterpiece",
+        lyrics: `[Db13] Lord, I will [Fmaj9] lift mine [C7#9] eyes to the hills
+                Knowing my help is [Bbmaj7] coming from You
+                You are my [Db13] strength when [C7#9] I am weak
+                You are the [Bbmaj7] portion of my life.`
+      },
+      {
+        id: "song_2",
+        title: "As The Deer (Tritone Upgrade)",
+        artist: "Martin J. Nystrom (Modern Anointed Gospel Accord)",
+        lyrics: `[Cmaj9] As the deer [G13] panteth for the [Am7] water
+                So my [Walkup C/E] soul longeth after [Fmaj9] Thee
+                [Cmaj9] You alone are my [G13] heart's de-[Am7]sire
+                And I [Walkup C/E] long to [D9] worship [Walkup C/E] Thee.`
+      },
+      {
+        id: "song_3",
+        title: "Let Your Glory Fall (Shout Drive)",
+        artist: "Traditional Uptempo Praise Drive",
+        lyrics: `[C7] Let Your glory [Db13] fall in this [C7] place!
+                We [Cmaj9] lift our voice in [Fmaj9] adoration,
+                For You are [C7#9] holy and [Db13] worthy of [Fmaj9] praise!`
+      }
+    ];
+
+    let currentSelectedSongIdx = 0;
+    let currentTransposeOffset = 0;
+
+    function renderSongsNav() {
+      const navContainer = document.getElementById("songs-list-nav");
+      navContainer.innerHTML = "";
+      songsData.forEach((song, idx) => {
+        const item = document.createElement("div");
+        item.className = `song-side-item ${idx === currentSelectedSongIdx ? 'active' : ''}`;
+        item.textContent = song.title;
+        item.onclick = () => selectSong(idx);
+        navContainer.appendChild(item);
+      });
+    }
+
+    function selectSong(idx) {
+      currentSelectedSongIdx = idx;
+      currentTransposeOffset = 0;
+      document.getElementById("transpose-offset-label").textContent = "0";
+      renderSongsNav();
+      renderSongLyrics();
+    }
+
+    // Helper to shift a chord formula name chromatically
+    function shiftGospelChord(chordName, shiftValue) {
+      if (shiftValue === 0) return chordName;
+      // Extract pitch root from chord name
+      let root = "";
+      let extension = "";
+      if (chordName.startsWith("C#") || chordName.startsWith("Db")) root = chordName.substring(0, 2);
+      else if (chordName.startsWith("D#") || chordName.startsWith("Eb")) root = chordName.substring(0, 2);
+      else if (chordName.startsWith("F#") || chordName.startsWith("Gb")) root = chordName.substring(0, 2);
+      else if (chordName.startsWith("G#") || chordName.startsWith("Ab")) root = chordName.substring(0, 2);
+      else if (chordName.startsWith("A#") || chordName.startsWith("Bb")) root = chordName.substring(0, 2);
+      else root = chordName.substring(0, 1);
+      
+      extension = chordName.substring(root.length);
+
+      // Standardize input sharp spelling
+      let normalizedRoot = root;
+      if (root === "Db") normalizedRoot = "C#";
+      if (root === "Eb") normalizedRoot = "D#";
+      if (root === "Gb") normalizedRoot = "F#";
+      if (root === "Ab") normalizedRoot = "G#";
+      if (root === "Bb") normalizedRoot = "A#";
+
+      const idx = chromaticNotes.indexOf(normalizedRoot);
+      if (idx === -1) return chordName; // Fallback
+
+      let newIdx = (idx + shiftValue) % 12;
+      if (newIdx < 0) newIdx += 12;
+
+      let newRoot = chromaticNotes[newIdx];
+      return newRoot + extension;
+    }
+
+    function renderSongLyrics() {
+      const song = songsData[currentSelectedSongIdx];
+      document.getElementById("current-song-title").textContent = song.title;
+      document.getElementById("current-song-artist").textContent = song.artist;
+
+      const lyricsOutlet = document.getElementById("lyrics-sheet-outlet");
+      
+      // Parse the chords with transpose shift
+      const rawText = song.lyrics;
+      // Regex parsing chords like [Cmaj7]
+      const chordRegex = /\[(.*?)\]/g;
+      
+      const parsedHtml = rawText.replace(chordRegex, (match, chordName) => {
+        const shiftedChord = shiftGospelChord(chordName, currentTransposeOffset);
+        return `<span class="chord-tag" onclick="playChordDirect('${shiftedChord}')">${shiftedChord}</span>`;
+      });
+
+      lyricsOutlet.innerHTML = parsedHtml;
+    }
+
+    function transposeSong(dir) {
+      currentTransposeOffset += dir;
+      if (currentTransposeOffset > 11) currentTransposeOffset = -12;
+      if (currentTransposeOffset < -12) currentTransposeOffset = 11;
+      
+      document.getElementById("transpose-offset-label").textContent = (currentTransposeOffset >= 0 ? "+" : "") + currentTransposeOffset;
+      renderSongLyrics();
+    }
+
+    function switchTab(tabIdx, btnEl) {
+      document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+      btnEl.classList.add("active");
+
+      document.querySelectorAll(".tab-content").forEach(tc => tc.classList.remove("active"));
+      document.getElementById(`tab-${tabIdx}`).classList.add("active");
+    }
+
+    // ==========================================
+    // AI PRACTICE COACH SIMULATION ENGINE
+    // ==========================================
+    function sendChatMessage() {
+      const inputEl = document.getElementById("chat-user-input");
+      const text = inputEl.value.trim();
+      if (!text) return;
+
+      appendMessage(text, "user");
+      inputEl.value = "";
+
+      // Smart coach response logic parsing core keywords
+      setTimeout(() => {
+        let responseText = "";
+        let targetVoicingToPlay = "";
+
+        const query = text.toLowerCase();
+        if (query.includes("c7#9") || query.includes("hendrix")) {
+          responseText = "Ah, the legendary **C7#9 dominant** shape, vital for sharp blues-sliding resolutions! Formula: Root (C), 3rd (E), b7 (A#), and the #9 tension extension (D#).\n\nHere are the key notes to lay on the keyboard: <button class='chord-inline-btn' onclick='playChordDirect(\"C7#9\")'>C, E, A#, D#2</button>. It creates instant soul tension!";
+          targetVoicingToPlay = "C7#9";
+        } else if (query.includes("2-5-1") || query.includes("progression")) {
+          responseText = "Great curiosity. In gospel, the **2-5-1** turns standard chord progressions into a soulful journey. In C Major:\n\n• **2 (ii-minor9)**: <button class='chord-inline-btn' onclick='playChordDirect(\"2-5-1 (C Major)\")'>D, F, A, C2, E2</button>\n• **5 (V-dominant13)**: <button class='chord-inline-btn' onclick='playChordDirect(\"G13\")'>G, B, F, A#</button>\n• **1 (I-major9)**: <button class='chord-inline-btn' onclick='playChordDirect(\"Cmaj9\")'>C, E, G, B, D2</button>\n\nClick any button above to play and visualize on the virtual keyboard!";
+        } else if (query.includes("db13") || query.includes("d flat")) {
+          responseText = "The **Db13 dominant chord** is beautiful for passing sequences resolution! It incorporates the deep C# root, F (3rd), A# (13th), and D# (9th), resolving nicely into F# or C.\n\nPlay the formula: <button class='chord-inline-btn' onclick='playChordDirect(\"Db13\")'>C#, F, A#, D#2</button>. Listen to the beautiful compression!";
+          targetVoicingToPlay = "Db13";
+        } else if (query.includes("shout") || query.includes("preacher")) {
+          responseText = "Preacher backing shout structures need dynamic **rhythm and tension**. Work on playing matching left-hand tritones while walking a rapid chromatic bassline.\n\nTry the visual **Shout Progression / Passing Tritone C**: <button class='chord-inline-btn' onclick='playChordDirect(\"Passing Tritone C\")'>C, A#, E</button>. Slide quickly into the major chords for an anointed effect!";
+          targetVoicingToPlay = "Passing Tritone C";
+        } else {
+          responseText = "I hear you, practitioner! In gospel keys, everything relies on smooth inversions and colorful chord extensions (9ths, 11ths, 13ths).\n\nLet me show you our foundational **Cmaj9 Anchor Voicing**: <button class='chord-inline-btn' onclick='playChordDirect(\"Cmaj9\")'>C, E, G, B, D2</button>. Try practicing this across multiple keys or ask me for another specific chord!";
+          targetVoicingToPlay = "Cmaj9";
+        }
+
+        appendMessage(responseText, "assistant");
+        
+        // Auto-play the target chord voicing if found
+        if (targetVoicingToPlay) {
+          playChordDirect(targetVoicingToPlay);
+        }
+      }, 700);
+    }
+
+    function appendMessage(text, sender) {
+      const chatBox = document.getElementById("chat-messages-box");
+      const bubble = document.createElement("div");
+      bubble.className = `chat-bubble bubble-${sender}`;
+      
+      // Simple markdown-ish conversion for bolding
+      let formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      formattedText = formattedText.replace(/\n/g, '<br>');
+      
+      bubble.innerHTML = formattedText;
+      chatBox.appendChild(bubble);
+      
+      // Auto scroll
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function handleSuggest(keyword) {
+      document.getElementById("chat-user-input").value = `Tell me about the ${keyword}`;
+      sendChatMessage();
+    }
+
+    // ==========================================
+    // INITIALIZATION RUN
+    // ==========================================
+    window.addEventListener("DOMContentLoaded", () => {
+      renderKeyboard();
+      renderSongsNav();
+      renderSongLyrics();
+      
+      // Automatically attempt to resume audio on first tap
+      document.body.addEventListener("click", () => {
+        if (audioCtx && audioCtx.state === 'suspended') {
+          resumeAudio();
+        }
+      }, { once: true });
+    });
+  </script>
+</body>
+</html>
